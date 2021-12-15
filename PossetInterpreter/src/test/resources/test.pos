@@ -1,0 +1,40 @@
+main (
+	Bla b;
+)
+
+Bla (
+	False t.first.first[A];
+)
+{
+	(A)
+}
+
+True
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#2)
+}
+
+/* The boolean consists of two possible values. */
+Boolean
+(
+	'2 first;
+)

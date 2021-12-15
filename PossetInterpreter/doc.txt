@@ -1,0 +1,8 @@
+Implementation tips:
+- if a variable in a posset definition occurs multiple times, its target possets should have the same structure. So, if posset A has two sub possets and posset B has only one sub posset, the two cannot be matched.
+
+Feature requests:
+- public/private children of a posset. Variables only bind to public children and makes IncompatibleVariableTargetsException occur less often. See syntax-errors/incompatible-variable-targets.pos for more info.
+
+
+

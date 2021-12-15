@@ -1,0 +1,28 @@
+True
+(
+	Boolean bool
+	(
+		val[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean bool
+	(
+		val[A];
+	)
+)
+{
+	(A)
+	(#0)
+}
+
+Boolean
+(
+	'2 val;
+)

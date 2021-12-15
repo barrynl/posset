@@ -1,0 +1,25 @@
+<configuration debug="false">
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%-5level]%msg%n</pattern> <!-- %d{mm:ss.SSS} %logger{20} -->
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+  </root>
+  
+  <logger name="nl.barry.posset.Interpreter" level="OFF" additivity="false">
+  	<appender-ref ref="STDOUT"/>
+  </logger>
+  
+  <logger name="nl.barry.posset.runtime.PossetFactoryImpl" level="TRACE" additivity="false">
+  	<appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="nl.barry.posset.InterpreterTest" level="INFO" additivity="false">
+  	<appender-ref ref="STDOUT"/>
+  </logger>
+  
+</configuration>

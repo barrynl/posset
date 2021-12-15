@@ -1,0 +1,30 @@
+main (
+	Double_Digit m_first
+	(
+		dd_second;
+	)
+	Digit m_second;
+)
+
+Double_Digit (
+	Digit dd_first
+	(
+		d_first[A];
+		d_second[B];
+	)
+	Digit dd_second
+	(
+		d_first[A];
+		d_second[B];
+	)
+)
+{
+	(A,B)
+	(#0,#0)
+	(#1,#0)
+}
+
+Digit (
+	'2 d_first;
+	'5 d_second;
+)

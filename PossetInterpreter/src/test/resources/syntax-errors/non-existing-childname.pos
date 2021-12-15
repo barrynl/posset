@@ -1,0 +1,14 @@
+main
+(
+	Test t1
+	(
+		firstTest[A];
+	)
+	'2 t2[A];
+)
+
+Test
+(
+	'2 first;
+)
+

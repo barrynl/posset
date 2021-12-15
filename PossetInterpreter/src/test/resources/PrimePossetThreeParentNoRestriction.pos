@@ -1,0 +1,13 @@
+main (
+	'2 first[A];
+	TestPosset second (
+		second[A];
+	)
+	TestPosset third (
+		second[A];
+	)
+)
+
+TestPosset (
+	'2 second;
+)

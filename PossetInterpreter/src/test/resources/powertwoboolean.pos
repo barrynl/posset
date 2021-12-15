@@ -1,0 +1,232 @@
+main ( 
+	/* the posset we want to restrict */
+	TwoBoolean b[A];
+	
+	/* the singleton values of the possiblities that you want to allow */
+	TwoBooOne t[B];
+	TwoBooFour f[C];
+	TwoBooThree x[G];
+	
+	/* the method of restricting b to only t,f and x */
+		
+	/* equals t */
+	TwoBooEquals e1 (
+		t1[A];
+		t2[B];
+		b[E];
+	)
+
+	/* equals f */
+	TwoBooEquals e2 (
+		t1[A];
+		t2[C];
+		b[F];
+	)
+	
+	/* equals x */
+	TwoBooEquals e3 (
+		t1[A];
+		t2[G];
+		b[H];
+	)
+	
+	/* one of them should be the case */
+	XOr o1 (
+		first[E];
+		second[F];
+		third[I];
+	)
+	
+	XOr o2 (
+		first[I];
+		second[H];
+		third[D];
+	)
+	True t2[D];
+)
+
+
+/* Two Boolean Relations */
+
+TwoBooEquals (
+	TwoBoolean t1
+	(
+		b1[A];
+		b2[B];
+	)
+	TwoBoolean t2
+	(
+		b1[C];
+		b2[D];
+	)
+	Boolean b[E];
+	
+	/* equals b1s */
+	Inverse i2 (
+		first[X];
+		second[W];	
+	)
+	XOr x2 (
+		first[A];
+		second[C];
+		third[X];
+	)
+	
+	/* equals b2s */
+	Inverse i1 (
+		first[Y];
+		second[Z];	
+	)
+	XOr x1 (
+		first[B];
+		second[D];
+		third[Y];
+	)
+	
+	And a3
+	(
+		first[W];
+		second[Z];
+		third[E];
+	)
+)
+
+
+TwoBoolean (
+	Boolean b1;
+	Boolean b2;
+)
+
+TwoBooOne (
+	TwoBoolean t ( 
+		b1( first[A]; )
+		b2( first[B]; )
+	)
+)
+{
+	(A,B)
+	(#1,#1)
+}
+
+TwoBooTwo (
+	TwoBoolean t ( 
+		b1( first[A]; )
+		b2( first[B]; )
+	)
+)
+{
+	(A,B)
+	(#1,#2)
+}
+
+TwoBooThree (
+	TwoBoolean t ( 
+		b1( first[A]; )
+		b2( first[B]; )
+	)
+)
+{
+	(A,B)
+	(#2,#1)
+}
+
+TwoBooFour (
+	TwoBoolean t ( 
+		b1 ( first[A]; )
+		b2 ( first[B]; ) 
+	)
+)
+{
+	(A,B)
+	(#2,#2)
+}
+
+
+
+/* Boolean Relations */
+
+
+Inverse
+(
+
+	Boolean first ( first[A]; )
+	Boolean second ( first[B]; )
+)
+{
+	(A, B)
+	(#1,#2)
+	(#2,#1)
+}
+
+
+Or
+(
+	Boolean first ( first[A]; )
+	Boolean second ( first[B]; )
+	Boolean third ( first[C]; )
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#1)
+	(#2,#1,#1)
+	(#2,#2,#2)
+}
+
+XOr
+(
+	Boolean first (first[A];)
+	Boolean second (first[B];)
+	Boolean third (first[C];)
+)
+{
+	(A,B,C)
+	(#1,#1,#2)
+	(#1,#2,#1)
+	(#2,#1,#1)
+	(#2,#2,#2)
+}
+
+And
+(
+	Boolean first (first[A];)
+	Boolean second (first[B];)
+	Boolean third (first[C];)
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#2)
+	(#2,#1,#2)
+	(#2,#2,#2)
+}
+
+True
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#2)
+}
+
+/* The boolean consists of two possible values. */
+Boolean
+(
+	'2 first;
+)

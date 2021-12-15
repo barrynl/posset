@@ -1,0 +1,172 @@
+options
+{
+	STATIC=false;
+}
+
+
+PARSER_BEGIN(PossetParser)
+package nl.barry.posset.ast;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class PossetParser {
+
+}
+
+PARSER_END(PossetParser)
+
+SKIP: { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "} 
+
+TOKEN: 
+{ 
+		//the identifier token represent relation names, 
+		//child relation names and variable names.
+		<INT :(["0"-"9"])+ >
+  |  	<IDENTIFIER :(["a"-"z","A"-"Z","0"-"9","_"])+ >
+  | 	<PRIME :("'"(["0"-"9"])+)>
+  | 	<OCUR :("{")>| <CCUR:("}")>
+  | 	<OSQR :("[")>| <CSQR:("]")>
+  |		<ORND :("(")>| <CRND:(")")>
+  | 	<SCLN :(";")>
+  | 	<DOT :(".")>
+  |     <COM :(",")>
+  |		<HSH :("#")>
+  | 	<POW :("^")>
+} 
+
+// When a /* is seen in the DEFAULT state, skip it and switch to the IN_COMMENT state 
+SKIP : { "/*": IN_COMMENT }
+
+// When any other character is seen in the IN_COMMENT state, skip it. 
+<IN_COMMENT> SKIP : { <~[]> }
+
+// When a */ is seen in the IN_COMMENT state, skip it and switch back to the DEFAULT state 
+<IN_COMMENT> SKIP:{"*/": DEFAULT}
+
+List<Posset> Program() throws Exception:
+{
+	Posset pos;
+	List<Posset> possets = new ArrayList<Posset>();
+}
+{
+	(
+		pos=Posset() {possets.add(pos);}
+	)+ 
+	{return possets;}
+}
+
+Posset Posset() throws Exception:
+{
+	Posset pos;
+	Token id;
+	Boolean pow = false;
+	List<String> header = null;
+	List<String> value = null;
+	List<List<String>> values = null;
+}
+{
+	({pow=true;} <POW>)?(id=<IDENTIFIER> {pos = new Posset(id.image, pow);}<ORND>) 
+	(
+		ChildPosset(pos)
+	)+ 
+	<CRND>
+	{values = new ArrayList<List<String>>();}
+	(
+		<OCUR>
+		header=RestrictionHeader() 
+		(
+			value=RestrictionValues()
+			{values.add(value);}
+		)*
+		<CCUR>
+		{pos.setRestriction(header, values);}
+	)?
+	{return pos;}
+}
+
+void ChildPosset(Posset pos) throws Exception:
+{
+	Token id;
+	Node node;
+}
+{
+	(
+		id=<IDENTIFIER>
+		| id=<PRIME> 
+	) 
+	node=Node() {pos.addChild(id.image, node);}
+}
+
+Node Node() :
+{
+	Node child;
+	Node root;
+}
+{
+		root=ChildPossetName() 
+		(
+				<SCLN>
+			|	<ORND> (
+					child=Node() {root.addChild(child);}
+				)+ <CRND> 
+			|	<DOT> child=Node() {root.addChild(child);}
+		)
+		{return root;}
+}
+
+Node ChildPossetName() :
+{
+	Token id;
+	Token var = null;
+}
+{
+	id=<IDENTIFIER>
+	(
+		<OSQR>var=<IDENTIFIER> <CSQR>
+	)?
+	{return new Node(id.image, (var == null ? null : var.image));}
+}
+
+List<String> RestrictionHeader():
+{
+	List<String> header = new ArrayList<String>();
+	Token id;
+}
+{
+	<ORND>
+	id=<IDENTIFIER>{header.add(id.image);}
+	(
+		<COM>
+		id=<IDENTIFIER>{header.add(id.image);}
+	)*
+	<CRND>
+	{return header;}
+}
+
+List<String> RestrictionValues():
+{
+	List<String> value;
+	String v;
+}
+{
+	<ORND>{value = new ArrayList<String>();}
+	v=Value(){value.add(v);}
+	(
+		<COM>
+		v=Value(){value.add(v);}
+	)*
+	<CRND>
+	{return value;}
+}
+
+String Value():
+{
+	Token hash;
+	Token integer;
+}
+{
+	hash=<HSH>
+	integer=<INT>
+	{return hash.image + integer.image;}
+}

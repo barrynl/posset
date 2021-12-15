@@ -1,0 +1,26 @@
+main (
+	TestPosset zeroed (
+		one[A];
+	)
+	'2 first[A];
+	TestPosset second (
+		one[A];
+	)
+	BlaPosset third (
+		one (
+			one[A];
+		)
+	)
+)
+
+TestPosset (
+	'2 one;
+)
+
+BlaPosset (
+	EekPosset one;
+)
+
+EekPosset (
+	'2 one;
+)

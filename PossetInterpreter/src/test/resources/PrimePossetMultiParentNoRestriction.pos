@@ -1,0 +1,18 @@
+main
+(
+	TestPosset first
+	(
+		first[B];
+	)
+	TestPosset second
+	(
+		first[B];
+	)
+	
+)
+
+TestPosset
+(
+	'2 first[A];
+	'2 second[A];
+)

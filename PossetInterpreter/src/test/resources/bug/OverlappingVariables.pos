@@ -1,0 +1,59 @@
+/* 
+This posset contains intertwined variables, namely: C,D intertwine with E. This detects the bug where
+the order in which the variables are collapsed is important. In this specific case, it should not have
+possies at all, so if it has one or more possies, it is incorrect. If you watch the outcome closely,
+you will notice it currently will return two different possies over a large number of runs, which is also incorrect.
+*/
+
+main
+(
+	Bla1 one
+	(
+		one[E];
+	)
+	Bla2 two
+	(
+		one[E];
+	)
+)
+
+Bla2
+(
+	Test one
+	(
+		one[D];
+	)
+	Test2 two[D];
+)
+
+Bla1
+(
+	Test one
+	(
+		one[C];
+	)
+	Test1 two[C];
+)
+
+Test2
+(
+	'2 one[B];
+)
+{
+	(B)
+	(#2)
+}
+
+Test1
+(
+	'2 one[A];
+)
+{
+	(A)
+	(#1)
+}
+
+Test
+(
+	'2 one;
+)

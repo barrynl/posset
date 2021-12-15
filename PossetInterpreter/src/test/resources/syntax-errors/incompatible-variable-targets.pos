@@ -1,0 +1,52 @@
+/*
+The following shows a classic error where the AlternativeZeroDigit conceptually is 
+a Digit, but it consists of two children instead of one, so it is incompatible with 
+Digit which only has a single child). You should correct this in the following way:
+
+main
+(
+	Digit first[A];
+	AlternativeZeroDigit second
+	(
+		d[A];
+	)
+)
+
+Note that in the future we might want to allow this if we implement public/private children. 
+Variables could then only bind to public children and makes the syntax below correct. But this
+is not the case in the current version.
+
+*/
+
+main
+(
+	Digit first[A];
+	AlternativeZeroDigit second[A];
+
+)
+
+/* this digit takes the value of zero too */
+AlternativeZeroDigit
+(
+	Digit d[B];
+	Zero z[B];
+)
+
+Zero
+(
+	Digit d
+	(
+		first[C];
+		second[D];
+	)
+)
+{
+	(C,D)
+	(#1,#1)
+}
+
+Digit
+(
+	'2 first;
+	'5 second;
+)

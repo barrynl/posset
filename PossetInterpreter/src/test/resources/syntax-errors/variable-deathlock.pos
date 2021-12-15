@@ -1,0 +1,44 @@
+main
+(
+	Zero zero[A]
+	(
+		d[B];	
+	)
+	
+	One one[B]
+	(
+		d[A];
+	)
+)
+
+Zero
+(
+	Digit d
+	(
+		d1[A];
+		d2[B];
+	)
+)
+{
+	(A,B)
+	(#1,#1)
+}
+
+One
+(
+	Digit d
+	(
+		d1[A];
+		d2[B];
+	)
+)
+{
+	(A,B)
+	(#1,#2)
+}
+
+Digit
+(
+	'2 d1;
+	'5 d2;
+)

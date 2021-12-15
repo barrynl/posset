@@ -1,0 +1,69 @@
+main
+(
+	IsZero iz
+	(
+		b[A];
+	)
+	Boolean b[A];
+)
+
+IsZero
+(
+	Digit d1
+	(
+		d1[A];
+		d2[B];
+	)
+	Boolean b
+	(
+		first[C];
+	)
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#2)
+	(#1,#3,#2)
+	(#1,#4,#2)
+	(#1,#5,#2)
+	(#2,#1,#2)
+	(#2,#2,#2)
+	(#2,#3,#2)
+	(#2,#4,#2)
+	(#2,#5,#2)
+}
+
+Digit
+(
+	'2 d1;
+	'5 d2;
+)
+
+Boolean
+(
+	'2 first;
+)
+
+True
+(
+	Boolean b
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean b
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#2)
+}

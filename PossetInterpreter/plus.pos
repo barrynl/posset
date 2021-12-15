@@ -1,0 +1,138 @@
+//To model greater_than and smaller_than I need to be able to add multiple items to filter, don't I? Or can I do it using a union?
+//Yes, no, we cannot (or do not want to) do it using a union (because modeling union into variables makes things complex while I'm 
+//unsure whether this actually is required for the language to be complete in whatever sense I mean it). We should be able to add 
+//multiple items to the filter. I believe we do not need OR/union. The filter should pass its entries to 'lower' levels which 
+//check whether the possibilities are valid (instead of generating them) and return true if so. The fundamental 'laws' of 
+//greater_than_or_equal and smaller_than_or_equal should be modeled hard-coded and then we can model equal by using both 
+//greater_than_or_equal and smaller_than_or_equal at the same time.
+
+//for OR you already need union! Maybe I should have variables make NANDs instead of ANDs, with NAND you can construct 
+//any other logical truth table. No, we do not want that, it makes everything overly complex. It might be necessary in the end, because
+//having variables model AND might be too weak, but for now there is no indication of this yet.
+
+//TruthTable for OR
+//=================
+//True, True, True
+//True, False, True
+//False, True, True
+//False, False, False
+
+
+//how to describe a filter. Maybe add two possibilities:
+//1) instead of using variables between square brackets you use #3 like expressions to indicate what possy the PRIME posset 
+//   should always be. This only allows defining a SINGLE possy for a particular posset and is good for creating singletons like digits.
+//2) use different (or the same? Not yet, maybe at a later stage) variables to indicate the different child possets and below the posset
+//   definition, give those variables multiple values!
+
+
+//The implementation of filters is quite challenging. I have tried two approaches, but with both I run into a series of problems. I describe them here:
+//1) Method 1 involves leaving the normal iteration process in tact, and just restrict the incoming possies to the onces that match any of the
+//restrictions. The problem with this method is, that for you to know whether a possy is allowed by the restriction, you need to retrieve it first,
+//but then the whole hasNext, next() sequence fails, because you already need to call the last next() and users cannot call next() again.
+//2) Method 2 involves letting the sub iters validate the possies given to them instead of generating the possies themselves. The problem 
+//with this method is that it is unclear how to integrate the restrictions into the iteration loop of the hasNext(). Do we want to see it
+//as a separate iterator that is linked to other iterators? No, because we cannot communicate the restriction iterator's values to the other iterators
+//for validation.
+
+
+//TROUBLES:
+//- If you collapse variables then that single iterator is called multiple times, so this creates problems...because it should return the same results a couple of times and then continue the normal flow. This 'couple-of-times' is the number of parents the posset of the iterator has. 
+//- If a prime posset receives a restriction in the hasNext() which it should validate if it is correct, it always returns true, which makes the posset loop infinitely and never return false, so it never stops. To solve this, I currently always return 'false' from a PrimePosset if a restriction comes in and the parent iterator ignores these falses (if restrictions are active) on the way forward (that is: if the last iters have been resetted again). But this is not enough, because it is unclear in exactly which child the restriction is active. So we've changed it to know which child iter is influenced by the restriction, but still it is unclear how to deal with it. Possibly we always need to return true when it is valid, but false when there is conflict with some other restriction. Then, we need to keep a counter in the parent and make sure every child under restriction is only called once.
+//- 
+
+>= (
+	Digit d_first[A];
+	Digit d_second[B];
+	Boolean b_third[C];
+)
+{
+	(A,B,C)
+	(0,0,True)
+	(0,1,False)
+	(0,2,False)
+	(0,3,False)
+	(0,4,False)
+	(0,5,False)
+	(0,6,False)
+	(0,7,False)
+	(0,8,False)
+	(0,9,False)
+	(1,0,True)
+	(1,1,True)
+	(1,2,False)
+	(1,3,False)
+	(1,4,False)
+	(1,5,False)
+	(1,6,False)
+	(1,7,False)
+	(1,8,False)
+	(1,9,False)
+	(2,0,True)
+	(2,1,True)
+	(2,2,True)
+	(2,3,False)
+	(2,4,False)
+	(2,5,False)
+	.......
+}
+
+False
+(
+	Boolean b.value[#0];
+)
+
+True (
+	Boolean b.value[#1];
+)
+
+Boolean (
+	'2 value;
+)
+
+0 (
+	Digit d{d_first[#0];d_second[#0];}
+)
+
+1 (
+	Digit d{d_first[#0];d_second[#1];}
+)
+
+2 (
+	Digit d{d_first[#0];d_second[#2];}
+)
+
+3 (
+	Digit d{d_first[#0];d_second[#3];}
+)
+
+4 (
+	Digit d{d_first[#0];d_second[#4];}
+)
+
+5 (
+	Digit d{d_first[#1];d_second[#0];}
+)
+
+6 (
+	Digit d{d_first[#1];d_second[#1];}
+)
+
+7 (
+	Digit d{d_first[#1];d_second[#2];}
+)
+
+8 (
+	Digit d{d_first[#1];d_second[#3];}
+)
+
+9 (
+	Digit d{d_first[#1];d_second[#4];}
+)
+
+Digit (
+	'2 d_first;
+	'5 d_second;
+)
+
+
+

@@ -1,0 +1,10 @@
+/* een test programma */
+main (
+	Person first[A];
+	Person second[A];
+)
+
+Person
+(
+	'3 first;
+)

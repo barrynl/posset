@@ -1,0 +1,21 @@
+main
+(
+	False first;
+)
+
+False
+(
+	Boolean first
+	(
+		first[A];
+	)
+)	
+{
+	(A)
+	(#2)
+}
+
+Boolean 
+(
+	'2 first;
+)

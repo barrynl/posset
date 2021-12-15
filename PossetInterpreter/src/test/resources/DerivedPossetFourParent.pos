@@ -1,0 +1,41 @@
+main
+(
+	CellNr c1
+	(
+		d1[A];
+		d2[A];
+		d3[A];
+	)
+	Zero z[A];
+)
+
+/* Cell nr */
+CellNr
+(
+	Digit d1;
+	Digit d2;
+	Digit d3;
+)
+
+/* copied from singleDigit.pos */
+
+/* define the ten digits as specifics from posset Digit */
+
+Zero(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#1,#1)}
+One(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#1,#2)}
+Two(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#1,#3)}
+Three(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#1,#4)}
+Four(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#1,#5)}
+Five(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#2,#1)}
+Six(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#2,#2)}
+Seven(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#2,#3)}
+Eight(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#2,#4)}
+Nine(Digit o1(d1[Y];d2[Z];)){(Y,Z)(#2,#5)}
+
+/* A digit has 10 possibilities */
+
+Digit
+(
+	'2 d1;
+	'5 d2;
+)

@@ -1,0 +1,431 @@
+/* Trying to write Brainfuck interpreter to prove the Posset language is Turing-complete */
+
+main
+(
+	InitialBrainfuckState start
+	(
+		bs[A];
+	)
+	ICCStateTransition increase1
+	(
+		s
+		(
+			s1[A];
+			s2[B];
+		)
+	)
+	BrainfuckState b[B];
+)
+
+main2
+(
+	InitialBrainfuckState start
+	(
+		bs[A];
+	)	
+	MPRStateTransition moveRight1
+	(
+		s
+		(
+			s1[A];
+			s2[B];
+		)
+	)
+	MPRStateTransition moveRight2
+	(
+		s
+		(
+			s1[B];
+			s2[C];
+		)
+	)
+	MPRStateTransition moveRight3
+	(
+		s
+		(
+			s1[C];
+			s2[D];
+		)
+	)
+	ICCStateTransition increase1
+	(
+		s
+		(
+			s1[D];
+			s2[E];
+		)
+	)
+	ICCStateTransition increase2
+	(
+		s
+		(
+			s1[E];
+			s2[F];
+		)
+	)
+	MPRStateTransition moveRight4
+	(
+		s
+		(
+			s1[F];
+			s2[G];
+		)
+	)
+	DCCStateTransition decrease1
+	(
+		s
+		(
+			s1[G];
+			s2[H];
+		)
+	)
+	BrainfuckState b[H];
+)
+
+DCCStateTransition
+(
+	StateTransition s
+	(
+		s1
+		(
+			pointer[B];
+			tape[A];
+		)
+		c1[C];
+		s2
+		(
+			pointer[B];
+			tape[D];
+		)
+	)
+	DecrementCurrentCell icc[C];
+	IncrementTapeCell inc
+	(
+		tape1[D];
+		toIncrease[B];
+		tape2[A];
+	)
+)
+
+
+ICCStateTransition
+(
+	StateTransition s
+	(
+		s1
+		(
+			pointer[B];
+			tape[A];
+		)
+		c1[C];
+		s2
+		(
+			pointer[B];
+			tape[D];
+		)
+	)
+	IncrementCurrentCell icc[C];
+	IncrementTapeCell inc
+	(
+		tape1[A];
+		toIncrease[B];
+		tape2[D];
+	)
+)
+
+MPRStateTransition
+(
+	StateTransition s
+	(
+		s1
+		(
+			pointer
+			(
+				d1[B];
+			)
+			tape[A];
+		)
+		c1[C];
+		s2
+		(
+			pointer
+			(
+				d1[F];
+			)
+			tape[A];
+		)
+	)
+	MovePointerRight mpr[C];
+	Plus p
+	(
+		p1[B];
+		p2[E];
+		p3[F];
+	)
+	One z[E];
+)
+
+MPLStateTransition
+(
+	StateTransition s
+	(
+		s1
+		(
+			pointer
+			(
+				d1[B];
+			)
+			tape[A];
+		)
+		c1[C];
+		s2
+		(
+			pointer
+			(
+				d1[F];
+			)
+			tape[A];
+		)
+	)
+	MovePointerLeft mpr[C];
+	Plus p
+	(
+		p1[F];
+		p2[E];
+		p3[B];
+	)
+	One z[E];
+)
+
+StateTransition
+(
+	BrainfuckState s1;
+	BrainfuckCommand c1;
+	BrainfuckState s2;
+)
+
+MovePointerRight(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#1,#1,#1)}
+
+MovePointerLeft(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#1,#1,#2)}
+
+IncrementCurrentCell(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#1,#2,#1)}
+
+DecrementCurrentCell(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#1,#2,#2)}
+
+OutputCurrentChar(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#2,#1,#1)}
+
+InputCurrentChar(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#2,#1,#2)}
+
+ConditionalJumpToCloseBracket(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#2,#2,#1)}
+
+ConditionalJumpToOpenBracket(BrainfuckCommand bc(c1[A];c2[B];c3[C];))
+{(A,B,C)(#2,#2,#2)}
+
+
+BrainfuckCommand
+(
+	'2 c1;
+	'2 c2;
+	'2 c3;
+)
+
+InitialBrainfuckState
+(
+	BrainfuckState bs
+	(
+		pointer[A];
+		tape[B];
+	)
+	InitialCellNr initialPointer
+	(
+		c1[A];
+	)
+	InitialTape initialTape
+	(
+		t[B];
+	)
+)
+
+BrainfuckState
+(
+	CellNr pointer;
+	Tape tape;
+	/*
+	InputChar input;
+	OutputChar output;
+	*/
+)
+
+InitialTape
+(
+	Tape t (
+		c2 (
+			d1[A];
+			d2[A];
+/*
+			d3[A];
+*/
+		)
+	)
+	Zero z[A];
+)
+
+IncrementTapeCell
+(
+	Tape tape1
+	(
+		c1
+		(
+			d1[A];
+		)
+		c2
+		(
+			d1[B];
+		)
+	)
+	CellNr toIncrease
+	(
+		d1[C];
+	)
+	Tape tape2
+	(
+		c1
+		(
+			d1[A];
+		)
+		c2
+		(
+			d1[D];
+		)
+	)
+	
+	/* als A == C, dan D = B + 1 anders D = B */
+	DigitEquals cond
+	(
+		d1[A];
+		d2[C];
+		b[F];
+	)
+	Increaser inc
+	(
+		b[F];
+		d[E];
+	)
+	Plus p
+	(
+		p1[B];
+		p2[E];
+		p3[D];
+	)
+)
+
+Increaser
+(
+	Boolean b
+	(
+		first[A];
+	)
+	Digit d
+	(
+		d1[B];
+		d2[C];
+	)
+)
+{
+	(A,B,C)
+	(#1,#1,#2)
+	(#2,#1,#1)
+}
+
+
+DigitEquals
+(
+	Digit d1[A];
+	Digit d2[B];
+	Boolean b[G];
+	Plus p
+	(
+		p1[C];
+		p2[B];
+		p3[A];
+	)
+	IsZero i
+	(
+		d1[C];
+		b[G];
+	)
+)
+
+IsZero
+(
+	Digit d1
+	(
+		d1[A];
+		d2[B];
+	)
+	Boolean b
+	(
+		first[C];
+	)
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#2)
+	(#1,#3,#2)
+	(#1,#4,#2)
+	(#1,#5,#2)
+	(#2,#1,#2)
+	(#2,#2,#2)
+	(#2,#3,#2)
+	(#2,#4,#2)
+	(#2,#5,#2)
+}
+
+/* Tape with 1000 Cells */
+Tape
+(
+	CellNr c1;
+	Cell c2;
+)
+
+
+InitialCellNr
+(
+	CellNr c1
+	(
+/*
+		d3[A];
+*/
+		d2[A];
+		d1[A];
+	)
+	Zero z[A];
+)
+
+/* Cell nr */
+CellNr
+(
+/*
+	Digit d3;
+*/
+	Digit d2;
+	Digit d1;
+)
+
+/* Cell value */
+Cell
+(
+/*	
+	Digit d3;
+*/
+	Digit d2;
+	Digit d1;
+)

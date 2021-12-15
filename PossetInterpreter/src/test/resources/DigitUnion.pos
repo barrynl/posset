@@ -1,0 +1,83 @@
+/* d should be both Zero and Nine if this test succeeds */
+main
+(
+	One z[A];
+	Two n[B];
+	Digit d[C];
+	DigitOr do
+	(
+		z[A];
+		n[B];
+		d[C];
+	)
+)
+
+DigitOr
+(
+	Digit z[A];
+	Digit n[B];
+	Digit d[C];
+	DigitEquals e1
+	(
+		d1[A];
+		d2[C];
+		b[D];
+	)
+	DigitEquals de2
+	(
+		d1[B];
+		d2[C];
+		b[E];
+	)
+	Or o1
+	(
+		first[D];
+		second[E];
+		third[F];
+	)
+	True t1[F];
+)
+
+DigitEquals
+(
+	Digit d1[A];
+	Digit d2[B];
+	Boolean b[G];
+	Plus p
+	(
+		p1[C];
+		p2[B];
+		p3[A];
+	)
+	IsZero i
+	(
+		d1[C];
+		b[G];
+	)
+)
+
+IsZero
+(
+	Digit d1
+	(
+		d1[A];
+		d2[B];
+	)
+	Boolean b
+	(
+		first[C];
+	)
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#2)
+	(#1,#3,#2)
+	(#1,#4,#2)
+	(#1,#5,#2)
+	(#2,#1,#2)
+	(#2,#2,#2)
+	(#2,#3,#2)
+	(#2,#4,#2)
+	(#2,#5,#2)
+}

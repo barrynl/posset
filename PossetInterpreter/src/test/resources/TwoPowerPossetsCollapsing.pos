@@ -1,0 +1,18 @@
+/* This needs to become a posset program that involves aggregation, but we start with just including the power operator (^). */
+
+main
+(
+	Boolean dd[A];
+	Boolean pb[A];
+)
+
+
+^PowerBoolean (
+	Boolean d;
+)
+
+/* The boolean consists of two possible values. */
+Boolean
+(
+	'2 first;
+)

@@ -1,0 +1,66 @@
+/* This needs to become a posset program that involves aggregation, but we start with just including the power operator (^). */ 
+
+main
+(
+	True t[C];
+	Sum s (
+		b.b[C];
+		d[B];
+	)
+	Digit d[B];
+)
+
+^PowerBoolean (
+	Boolean b;
+)
+
+Sum (
+	PowerBoolean b[A];
+	Digit d[E];
+	
+	/*pick(A,B,C);*/
+	Plus p (
+		d1[B];
+		d2[D];
+		d3[E];
+	)
+	Sum s (
+		b[C];
+		d[D];
+	)
+
+
+)
+
+
+
+
+
+Boolean
+(
+	'2 first;
+)
+
+True
+(
+	Boolean b
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean b
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#2)
+}

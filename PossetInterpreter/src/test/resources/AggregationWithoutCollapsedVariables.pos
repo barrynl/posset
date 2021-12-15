@@ -1,0 +1,15 @@
+main
+(
+	PowerDigit pb;
+)
+
+
+^PowerDigit (
+	Digit d;
+)
+
+Digit
+(
+	'2 d1;
+	'5 d2;
+)
