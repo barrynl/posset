@@ -29,6 +29,7 @@ public class DerivedPosset extends Posset {
 	private Map<PossetPath, String> variables;
 
 	public DerivedPosset(String aName) {
+		super(null);
 		this.name = aName;
 		this.subPossets = new HashMap<String, Posset>();
 	}
@@ -79,5 +80,10 @@ public class DerivedPosset extends Posset {
 	@Override
 	public Posset getGeneratedByPosset() {
 		return null;
+	}
+
+	@Override
+	public String toText() {
+		return "ToTextOfDerivedPosset";
 	}
 }

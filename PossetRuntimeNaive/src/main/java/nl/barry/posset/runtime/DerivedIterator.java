@@ -64,7 +64,7 @@ public class DerivedIterator implements Iterator<Element> {
 		Possy p;
 		List<Possy> subs = new ArrayList<Possy>();
 		for (Iterator<? extends Element> i : this.childIters) {
-			p = i.current();
+			p = (Possy) i.current();
 			if (p == null) {
 				return dp;
 			}

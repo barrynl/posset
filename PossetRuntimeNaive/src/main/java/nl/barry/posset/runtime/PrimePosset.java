@@ -1,7 +1,5 @@
 package nl.barry.posset.runtime;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +14,7 @@ public class PrimePosset extends Posset {
 	private int prime;
 
 	public PrimePosset(int aPrime) {
-		super();
+		super(null);
 		this.prime = aPrime;
 	}
 
@@ -45,6 +43,11 @@ public class PrimePosset extends Posset {
 	public String toString() {
 		return "PrimePosset [generatedByPosset=" + generatedByPosset + ", iterator=" + iterator + ", prime=" + prime
 				+ "]";
+	}
+
+	@Override
+	public String toText() {
+		return "toTextOfPrimePosset";
 	}
 
 }
