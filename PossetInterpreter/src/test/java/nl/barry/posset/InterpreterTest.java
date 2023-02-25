@@ -1,9 +1,6 @@
 package nl.barry.posset;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.StringReader;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,16 +20,15 @@ import nl.barry.posset.runtime.DerivedPosset;
 import nl.barry.posset.runtime.DerivedPossy;
 import nl.barry.posset.runtime.Element;
 import nl.barry.posset.runtime.Posset;
+import nl.barry.posset.runtime.Possy;
 import nl.barry.posset.runtime.PrimePosset;
-import syntax.SyntaxException;
 
 public class InterpreterTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(InterpreterTest.class);
 
 	@Test
-	public void testAggregation()
-			throws Exception {
+	public void testAggregation() throws Exception {
 		Interpreter i = new Interpreter();
 		Class<InterpreterTest> claz = InterpreterTest.class;
 		i.loadSourceFile(claz.getResourceAsStream("/Aggregation.pos"));
@@ -41,7 +37,22 @@ public class InterpreterTest {
 		List<Element> possies = i.getPossies();
 
 		for (Element p : possies) {
-			LOG.info("{}", ((DerivedPossy) p).getSubPossy("d"));
+			Element subPossy = ((DerivedPossy) p).getSubPossy("dd1");
+			if (subPossy instanceof Possy) {
+				LOG.info("{}", subPossy);
+			}
+			if (subPossy instanceof Posset) {
+				LOG.info("Found posset!");
+				Posset subPosset = (Posset) subPossy;
+				Iterator<? extends Element> iter = subPosset.iterator();
+				while (iter.hasNext()) {
+					Element elem = iter.next();
+					LOG.info("{}", elem);
+				}
+			} else {
+				LOG.error("Should be either a Possy or a Posset and not {}", subPossy.getClass().getSimpleName());
+			}
+//			Printer.possyPrinter(p, true, System.out);
 		}
 		LOG.info("Nr of possies: {}", possies.size());
 	}
@@ -65,8 +76,7 @@ public class InterpreterTest {
 	}
 
 	@Test
-	public void testMultiDigitPlus()
-			throws Exception {
+	public void testMultiDigitPlus() throws Exception {
 
 		long start = System.currentTimeMillis();
 
@@ -96,8 +106,7 @@ public class InterpreterTest {
 	}
 
 	@Test
-	public void testBrainfuckInterpreter()
-			throws Exception {
+	public void testBrainfuckInterpreter() throws Exception {
 		Interpreter i;
 		int nrOfPossies = 10;
 
@@ -129,8 +138,7 @@ public class InterpreterTest {
 	}
 
 	@Test
-	public void testDigitUnion()
-			throws Exception {
+	public void testDigitUnion() throws Exception {
 		Interpreter i = new Interpreter();
 		Class<InterpreterTest> claz = InterpreterTest.class;
 		i.loadSourceFile(claz.getResourceAsStream("/boolean.pos"));
