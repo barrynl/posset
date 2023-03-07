@@ -1,0 +1,87 @@
+main
+(
+	PowerBoolean pb1[B];
+	pick p (
+		pos[B];
+		elem[ELEM];
+		rest[REST];
+	)
+	Boolean d[ELEM];
+	PowerBoolean pb2[REST];
+)
+
+^PowerBoolean (
+	Boolean b;
+)
+
+Or
+(
+	Boolean first ( first[A]; )
+	Boolean second ( first[B]; )
+	Boolean third ( first[C]; )
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#1)
+	(#2,#1,#1)
+	(#2,#2,#2)
+}
+
+XOr
+(
+	Boolean first (first[A];)
+	Boolean second (first[B];)
+	Boolean third (first[C];)
+)
+{
+	(A,B,C)
+	(#1,#1,#2)
+	(#1,#2,#1)
+	(#2,#1,#1)
+	(#2,#2,#2)
+}
+
+And
+(
+	Boolean first (first[A];)
+	Boolean second (first[B];)
+	Boolean third (first[C];)
+)
+{
+	(A,B,C)
+	(#1,#1,#1)
+	(#1,#2,#2)
+	(#2,#1,#2)
+	(#2,#2,#2)
+}
+
+True
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#1)
+}
+
+False
+(
+	Boolean first
+	(
+		first[A];
+	)
+)
+{
+	(A)
+	(#2)
+}
+
+/* The boolean consists of two possible values. */
+Boolean
+(
+	'2 first;
+)

@@ -31,24 +31,37 @@ public class PickPosset extends DerivedPosset {
 
 	}
 
-	public void setPosset(CollapsedVariablesPosset aPowerPosset) throws ChildAlreadyExistsException {
+	public void addPosset(CollapsedVariablesPosset aPowerPosset) throws ChildAlreadyExistsException {
 		this.addChild(SET, aPowerPosset);
+	}
+
+	
+	public void setPosset(CollapsedVariablesPosset aPowerPosset) {
+		this.setChild(SET, aPowerPosset);
 	}
 
 	public CollapsedVariablesPosset getElemPosset() {
 		return this.getChildPosset(ELEM);
 	}
 
-	public void setElemPosset(CollapsedVariablesPosset aElem) throws ChildAlreadyExistsException {
+	public void addElemPosset(CollapsedVariablesPosset aElem) throws ChildAlreadyExistsException {
 		this.addChild(ELEM, aElem);
+	}
+	
+	public void setElemPosset(CollapsedVariablesPosset aElem) {
+		this.setChild(ELEM, aElem);
 	}
 
 	public CollapsedVariablesPosset getRestPosset() {
 		return this.getChildPosset(REST);
 	}
 
-	public void setRestPosset(CollapsedVariablesPosset aRest) throws ChildAlreadyExistsException {
+	public void addRestPosset(CollapsedVariablesPosset aRest) throws ChildAlreadyExistsException {
 		this.addChild(REST, aRest);
+	}
+	
+	public void setRestPosset(CollapsedVariablesPosset aRest) {
+		this.setChild(REST, aRest);
 	}
 
 	@Override

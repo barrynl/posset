@@ -40,7 +40,7 @@ import syntax.SyntaxException;
  */
 public class PossetFactoryImpl implements PossetFactory {
 
-	private static final String TEMPLATE_VAR = "$TV";
+	public static final String TEMPLATE_VAR = "$TV";
 
 	private static final Logger LOG = LoggerFactory.getLogger(PossetFactoryImpl.class);
 
@@ -265,6 +265,7 @@ public class PossetFactoryImpl implements PossetFactory {
 				CollapsedVariablesPosset powerOfPosset = getRuntimePosset(possetByName, aPosset.getChildType(childNode),
 						currentNodesCopy, variableMapping);
 
+				// apparently, cloning the posset is not enough, we need to generate it again.
 				CollapsedVariablesPosset clonedPosset = getRuntimePosset(possetByName, aPosset.getChildType(childNode),
 						currentNodesCopy, variableMapping);
 
@@ -401,12 +402,16 @@ public class PossetFactoryImpl implements PossetFactory {
 
 //					variableMapping.put(new HashSet<String>(Arrays.asList(n.getVar())),
 //							new HashSet<CollapsedVariablesPosset>(Arrays.asList(aRest)));
+				} else {
+					throw new SyntaxException(
+							"The pick operator should either have 'pos', 'elem' or 'rest' with a variable as children and not '"
+									+ n.getName() + "'");
 				}
 			}
 
-			pp.setPosset(aPowerPosset);
-			pp.setElemPosset(aElem);
-			pp.setRestPosset(aRest);
+			pp.addPosset(aPowerPosset);
+			pp.addElemPosset(aElem);
+			pp.addRestPosset(aRest);
 
 			pos = pp;
 
@@ -477,35 +482,6 @@ public class PossetFactoryImpl implements PossetFactory {
 				nodeIter.remove();
 			}
 		}
-	}
-
-	/**
-	 * Adds a unique variable to each prime posset of the given posset.
-	 * 
-	 * @param templatePosset The posset who's primepossets need to have a variable.
-	 * @param variables      The list that will be filled with variable names added.
-	 * @param varIndex       The variable index to be used for naming.
-	 * @return the variable index after it is being used for naming.
-	 */
-	private int setRestrictionVariables(Posset templatePosset, List<String> variables, int varIndex) {
-		if (templatePosset instanceof PrimePosset) {
-			PrimePosset p = (PrimePosset) templatePosset;
-			String varName = TEMPLATE_VAR + varIndex;
-			p.setVar(varName);
-			variables.add(varName);
-			varIndex += 1;
-		} else if (templatePosset instanceof DerivedPosset) {
-			DerivedPosset dp = (DerivedPosset) templatePosset;
-
-			Collection<CollapsedVariablesPosset> children = dp.getChildren();
-
-			for (CollapsedVariablesPosset cvp : children) {
-				varIndex = setRestrictionVariables(cvp, variables, varIndex);
-			}
-
-		}
-
-		return varIndex;
 	}
 
 	private void addToCollection(String aVar, CollapsedVariablesPosset aPosset,
@@ -1017,8 +993,9 @@ public class PossetFactoryImpl implements PossetFactory {
 						// to retain the information about variables in this
 						// tree-part.
 						CollapsedVariablesPosset wastedPosset = p.getAncestor(highestCommonAncestorCandidate);
-						assert combinedPosset.getAncestor(
-								highestCommonAncestorCandidate) == highestCommonAncestorCandidate : "The ancestor of combinedPosset should be exactly the same object.";
+						assert combinedPosset
+								.getAncestor(highestCommonAncestorCandidate) == highestCommonAncestorCandidate
+								: "The ancestor of combinedPosset should be exactly the same object.";
 
 						for (Posset p3 : combinedPosset.getParents()) {
 							if (p3 instanceof DerivedPosset) {
@@ -1060,7 +1037,18 @@ public class PossetFactoryImpl implements PossetFactory {
 					// processed it only has a single parent.
 
 					CollapsedVariablesPosset cvp = p.getParents().iterator().next();
-					if (cvp instanceof DerivedPosset) {
+					if (cvp instanceof PickPosset) {
+						LOG.debug("Found the pick operator, connecting possets correctly.");
+						PickPosset pickPosset = (PickPosset) cvp;
+
+						if (pickPosset.getPosset() == p) {
+							pickPosset.setPosset(combinedPosset);
+						} else if (pickPosset.getElemPosset() == p) {
+							pickPosset.setElemPosset(combinedPosset);
+						} else if (pickPosset.getRestPosset() == p) {
+							pickPosset.setRestPosset(combinedPosset);
+						}
+					} else if (cvp instanceof DerivedPosset) {
 						DerivedPosset parentP = (DerivedPosset) cvp;
 						Set<String> theNames = this.getNamesInParent(p, parentP);
 
@@ -1072,18 +1060,6 @@ public class PossetFactoryImpl implements PossetFactory {
 						CVPowerPosset powerP = (CVPowerPosset) cvp;
 						highestCommonAncestorCandidate.copyPrimeVars(p);
 						powerP.setPowerOfPosset(combinedPosset);
-					} else if (cvp instanceof PickPosset) {
-						LOG.debug("Found the pick operator, connecting possets correctly.");
-						PickPosset pickPosset = (PickPosset) cvp;
-//						highestCommonAncestorCandidate.copyPrimeVars(p);
-
-						if (pickPosset.getPosset() == p) {
-							pickPosset.setPosset(combinedPosset);
-						} else if (pickPosset.getElemPosset() == p) {
-							pickPosset.setElemPosset(combinedPosset);
-						} else if (pickPosset.getRestPosset() == p) {
-							pickPosset.setRestPosset(combinedPosset);
-						}
 					}
 
 					if (!(cvp instanceof PickPosset)) {
@@ -1096,8 +1072,60 @@ public class PossetFactoryImpl implements PossetFactory {
 						CollapsedVariablesPosset counter = combinedPosset.getAncestor(p);
 
 						replacementMapping.putAll(findReplacements(p, counter));
-					}
+					} else {
+						PickPosset pick = (PickPosset) cvp;
 
+						if (isPickPossetReady(pick)) {
+							CollapsedVariablesPosset pos = pick.getPosset();
+							CollapsedVariablesPosset elem = pick.getElemPosset();
+							CollapsedVariablesPosset rest = pick.getRestPosset();
+
+							// first filter elem in such a way that it contains an element of pos.
+							DerivedPosset templatePosset = new DerivedPosset("templateOf-" + elem.getName());
+
+							// Make sure the children of the clonedPosset's are also present in variables
+							// mapping.
+							templatePosset.addChild("copyOfPowerOfPosset", elem);
+							templatePosset.setGeneratedByPosset(elem.getGeneratedByPosset());
+							ArrayList<String> variables = new ArrayList<String>();
+							setRestrictionVariables(templatePosset, variables, 0);
+							templatePosset.setRestrictionHeader(variables);
+							ArrayList<List<Integer>> emptyValues = new ArrayList<List<Integer>>();
+							for (int j = 0; j < variables.size(); j++) {
+								emptyValues.add(new ArrayList<Integer>());
+							}
+							templatePosset.setRestrictionValues(emptyValues);
+
+							if (pos.iterator().hasNext()) {
+								// set template posset to correct restriction values.
+								Element otherPosset = pos.iterator().next();
+								if (otherPosset.isPosset()) {
+									DerivedPosset otherCVPosset = (DerivedPosset) otherPosset;
+									var iter = otherCVPosset.iterator();
+
+									var restrictionValues = new ArrayList<List<Integer>>();
+									restrictionValues.add(new ArrayList<>());
+
+									while (iter.hasNext()) {
+										Element e = iter.next();
+										if (e.isPosset())
+											throw new UnsupportedOperationException(
+													"Power possets of power possets not yet supported!");
+
+										Possy possy = (Possy) e;
+
+										var currentRestrictionValues = findCorrespondingRestrictionValues(otherCVPosset,
+												possy, templatePosset);
+										restrictionValues.addAll(currentRestrictionValues);
+									}
+									templatePosset.setRestrictionValues(restrictionValues);
+								}
+
+							}
+
+							pick.setElemPosset(templatePosset);
+						}
+					}
 				}
 			}
 		} else if (unionList.size() > 1)
@@ -1110,6 +1138,133 @@ public class PossetFactoryImpl implements PossetFactory {
 		LOG.trace("Created combined posset: {}", combinedPosset);
 
 		return replacementMapping;
+	}
+
+	private boolean isPickPossetReady(PickPosset pick) {
+		CollapsedVariablesPosset pos = pick.getPosset();
+		CollapsedVariablesPosset elem = pick.getElemPosset();
+		CollapsedVariablesPosset rest = pick.getRestPosset();
+
+		return !(pos instanceof AnyPosset || elem instanceof AnyPosset || rest instanceof AnyPosset);
+
+	}
+
+	/**
+	 * Make sure the list of lists is in the same order as the header variables.
+	 * 
+	 * @param dp
+	 * @param p
+	 * @return
+	 */
+	private List<List<Integer>> findCorrespondingRestrictionValues(DerivedPosset dp, Possy p,
+			DerivedPosset templatePosset) {
+		List<String> headers = dp.getRestrictionHeader();
+		var firstValuesMapping = transformPossyIntoRestrictionValues(templatePosset.getChildren().iterator().next(), p);
+
+		// split valuesMapping into header variables
+		var valuesMapping = splitIntoHeaderVariables(headers, firstValuesMapping);
+
+		List<List<Integer>> existingValues = dp.getRestrictionValues();
+		for (int i = 0; i < headers.size(); i++) {
+			Integer newValue = valuesMapping.get(headers.get(i));
+			List<Integer> existingValue = existingValues.get(i);
+			List<Integer> copyOfExistingValue = new ArrayList<>(existingValue);
+			copyOfExistingValue.add(newValue);
+			existingValues.set(i, copyOfExistingValue);
+		}
+		return existingValues;
+	}
+
+	private Map<String, Integer> splitIntoHeaderVariables(List<String> headers, Map<String, Integer> valuesMapping) {
+		var newMapping = new HashMap<String, Integer>();
+		for (String header : headers) {
+			for (Entry<String, Integer> entry : valuesMapping.entrySet()) {
+				if (entry.getKey().contains(header)) {
+					newMapping.put(header, entry.getValue());
+					break;
+				}
+			}
+		}
+		return newMapping;
+	}
+
+	private Map<String, Integer> transformPossyIntoRestrictionValues(CollapsedVariablesPosset childOfTemplatePosset,
+			Element p) {
+
+		assert !p.isPosset();
+
+		Map<String, Integer> values = new HashMap<>();
+
+		if (p instanceof PrimePossy && childOfTemplatePosset instanceof PrimePosset) {
+			PrimePossy pp = (PrimePossy) p;
+			values.put(childOfTemplatePosset.getVar(), pp.getId());
+		} else if (p instanceof DerivedPossy && childOfTemplatePosset instanceof DerivedPosset) {
+			DerivedPossy dp = (DerivedPossy) p;
+
+			DerivedPosset childOfTemplate = (DerivedPosset) childOfTemplatePosset;
+			DerivedPosset cvp = (DerivedPosset) dp.getGeneratedByPosset();
+
+			// skip some possets in the tree that were added due to collapsedvariables.
+			CollapsedVariablesPosset lookPosset = cvp;
+			DerivedPosset lookDerivedPosset = cvp;
+
+			if (lookPosset != null && lookPosset instanceof DerivedPosset) {
+
+				lookDerivedPosset = (DerivedPosset) lookPosset;
+				Collection<String> childNames = lookDerivedPosset.getChildNames();
+
+				for (String childName : childNames) {
+
+					CollapsedVariablesPosset childPosset = lookDerivedPosset.getChildPosset(childName);
+
+					List<Element> possies = dp.getSubPossies();
+					for (int i = 0; i < possies.size(); i++) {
+						Element e = possies.get(i);
+						if (e.getGeneratedByPosset() == childPosset) {
+
+							var childPossetOfTemplate = childOfTemplate.getChildPosset(childName);
+
+							assert childPossetOfTemplate != null;
+							// the powerOf posset has been reconnected, so there is a mismatch.
+							values.putAll(transformPossyIntoRestrictionValues(childPossetOfTemplate, e));
+						}
+					}
+				}
+			}
+		} else {
+			LOG.warn("This option should not happen! The possy and possets should align.");
+		}
+		return values;
+
+	}
+
+	/**
+	 * Adds a unique variable to each prime posset of the given posset.
+	 * 
+	 * @param templatePosset The posset who's primepossets need to have a variable.
+	 * @param variables      The list that will be filled with variable names added.
+	 * @param varIndex       The variable index to be used for naming.
+	 * @return the variable index after it is being used for naming.
+	 */
+	private int setRestrictionVariables(Posset templatePosset, List<String> variables, int varIndex) {
+		if (templatePosset instanceof PrimePosset) {
+			PrimePosset p = (PrimePosset) templatePosset;
+			String varName = TEMPLATE_VAR + varIndex;
+			p.setVar(varName);
+			variables.add(varName);
+			varIndex += 1;
+		} else if (templatePosset instanceof DerivedPosset) {
+			DerivedPosset dp = (DerivedPosset) templatePosset;
+
+			Collection<CollapsedVariablesPosset> children = dp.getChildren();
+
+			for (CollapsedVariablesPosset cvp : children) {
+				varIndex = setRestrictionVariables(cvp, variables, varIndex);
+			}
+
+		}
+
+		return varIndex;
 	}
 
 	private Map<CollapsedVariablesPosset, CollapsedVariablesPosset> findReplacements(
